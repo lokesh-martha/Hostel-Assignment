@@ -69,13 +69,11 @@ export default function Home() {
 
     const token = getJwtFromCookie();
     if (token) {
-      console.log(token);
       const decoded = jwtDecode<MyJwtPayload>(token);
       setUser({ username: decoded.username, role: decoded.role });
       process.env.role = decoded.role;
       process.env.username = decoded.username;
       process.env.token = token;
-      console.log(process.env.role);
     }
 
     if (!token) {
@@ -176,6 +174,7 @@ export default function Home() {
         >
           Register
         </button>
+        <div className="flex justify-center mt-4">
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string }>
           <GoogleLogin
             onSuccess={handleGoogleLogin}
@@ -183,7 +182,7 @@ export default function Home() {
               console.log('Google login failed');
             }}
           />
-        </GoogleOAuthProvider>
+        </GoogleOAuthProvider></div>
       </div>
     </div>
   );

@@ -1,67 +1,66 @@
-.container {
-    padding: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f9fafb;
-  }
-  
-  .form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    max-width: 420px;
-    width: 100%;
-    background-color: #ffffff;
-    padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-  }
-  
-  .heading {
-    text-align: center;
-    margin-bottom: 0.5rem;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #111827;
-  }
-  
-  .label {
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-  
-  .input {
-    margin-top: 4px;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #d1d5db;
-    font-size: 0.95rem;
-    width: 100%;
-  }
-  
-  .row {
-    display: flex;
-    gap: 0.75rem;
-  }
-  
-  .button {
-    padding: 10px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .submitButton {
-    background-color: #2563eb;
-    color: #fff;
-  }
-  
-  .goBackButton {
-    background-color: #6b7280;
-    color: #fff;
-  }
-  
+/* .container {
+  padding: .25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f9fafb;
+} */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 700px; /* ⬆️ Increased width */
+  width: 100%;
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.heading {
+  text-align: center;
+  margin-bottom: 0.25rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.label {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.input {
+  margin-top: 4px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  gap: 1rem;
+}
+
+.button {
+  padding: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submitButton {
+  background-color: #2563eb;
+  color: #fff;
+}
+
+.goBackButton {
+  background-color: #6b7280;
+  color: #fff;
+}

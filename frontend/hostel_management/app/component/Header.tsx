@@ -4,37 +4,49 @@ import { useRouter } from "next/navigation";
 
 export default function Header() {
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [feeDue, setFeeDue] = useState(false);
+  const [feeAmount, setFeeAmount] = useState(0);
+  const [showFeeDetails, setShowFeeDetails] = useState(false);
+
+  const [isAuthenticated, setIsAuthenticated] = useState(true); 
+  const [username, setUsername] = useState<string|undefined>(""); 
 
   useEffect(() => {
-    const checkAuth = () => {
-      const cookies = document.cookie;
-      const jwtToken = cookies
-        .split("; ")
-        .find((row) => row.startsWith("jwt="))
-        ?.split("=")[1];
+    setUsername(process.env.username)
+    if (!isAuthenticated || !username) return;
 
-      setIsAuthenticated(!!jwtToken);
+    const eventSource = new EventSource(`http://localhost:3000/students/fee-status/${username}`,{
+      withCredentials:true
+    });
+
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        setFeeDue(data.feeDue > 0);
+        setFeeAmount(data.feeDue);
+      } catch (err) {
+        console.error("Error parsing SSE data:", err);
+      }
     };
 
-    checkAuth();
+    eventSource.onerror = (err) => {
+      console.error("SSE connection error:", err);
+      eventSource.close();
+    };
 
-    const interval = setInterval(checkAuth, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
+    return () => {
+      eventSource.close();
+    };
+  }, [isAuthenticated, username]);
 
   const handleLogout = async () => {
     try {
-      const res = await fetch("http://localhost:3000/auth/logout", {
+      await fetch("http://localhost:3000/auth/logout", {
         method: "POST",
         credentials: "include",
       });
-      const data = await res.json();
-      process.env.token='';
-      process.env.username='';
-      process.env.role='';
-      // alert(data.message);
+      setIsAuthenticated(false);
+      setUsername("");
       router.push("/authentication");
     } catch (error) {
       console.error("Logout failed:", error);
@@ -48,7 +60,23 @@ export default function Header() {
   return (
     <header className="bg-slate-800 text-white px-6 py-4 shadow-md flex justify-between items-center">
       <h1 className="text-xl font-bold">🏠 Hostel Management</h1>
-      <nav className="space-x-6 text-sm">
+      <nav className="space-x-6 text-sm flex items-center relative">
+        {feeDue && (
+          <div className="relative">
+            <button onClick={() => setShowFeeDetails(!showFeeDetails)} className="text-xl relative">
+              🔔
+              <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full border border-white"></span>
+            </button>
+
+            {showFeeDetails && (
+              <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg p-4 z-10">
+                <p className="font-semibold">Fee Due</p>
+                <p>Amount: ₹{feeAmount}</p>
+              </div>
+            )}
+          </div>
+        )}
+
         {isAuthenticated ? (
           <button onClick={handleLogout} className="hover:underline">
             🔓 Logout

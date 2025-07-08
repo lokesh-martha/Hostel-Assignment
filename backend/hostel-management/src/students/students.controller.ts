@@ -9,6 +9,7 @@ import {
   Put,
   UseGuards,
   Query,
+  Sse,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { Student } from '../Schemas/students.schema';
@@ -25,6 +26,11 @@ import { Roles } from 'src/decorator/roles.decorator';
 import { Role } from 'src/enums/roles.enum';
 import { Room } from 'src/Schemas/rooms.schema';
 import { ApplicationDto } from 'src/dto/application.dto';
+import { PaymentDto } from 'src/dto/payment.dto';
+import { Types } from 'mongoose';
+import { from, interval, map, Observable, switchMap } from 'rxjs';
+import { Notice } from 'src/Schemas/notice.schema';
+import { CreateNoticeDto } from 'src/dto/createNotice.dto';
 
 @ApiTags('students')
 @ApiBearerAuth('access-token')
@@ -33,13 +39,33 @@ import { ApplicationDto } from 'src/dto/application.dto';
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
-
+  @UseGuards() 
+  @Sse('fee-status/:username')
+  sendFeeStatus(@Param('username') username: string): Observable<MessageEvent> {
+    return interval(5000).pipe(
+      switchMap(() => from(this.studentsService.getFeeDueForUser(username))),
+      map((feeDue) => new MessageEvent('message', { data: { feeDue } })),
+    );
+  }
   @Get('GetStudentDetails')
   @ApiOperation({ summary: 'Get all students' })
   @ApiResponse({ status: 200, type: [StudentDto] })
   async findAll(): Promise<Student[]> {
     return this.studentsService.findAll();
   }
+  @Get('GetAllNotices')
+  @ApiOperation({ summary: 'Get all notices' })
+  @ApiResponse({ status: 200, type: [Notice] })
+  async findAllNotices(): Promise<Notice[]> {
+    return this.studentsService.findAllNotices();
+  }
+  
+  @Post('addnotice')
+@ApiOperation({ summary: 'Add a new notice' })
+  @ApiResponse({ status: 201, type: Notice })
+  async addNotice(@Body() createNoticeDto: CreateNoticeDto): Promise<Notice> {
+    return this.studentsService.addNotice(createNoticeDto);
+  }
 
   @Get('GetTotalStudents')
   @ApiOperation({ summary: 'Get total number of students' })
@@ -65,11 +91,45 @@ export class StudentsController {
   async getApplications() {
     return this.studentsService.getApplications();
   }
+  @Post('pay')
+  async recordPayment(
+    @Body()
+    body: {
+      studentId: string;
+      amountPaid: number;
+      paymentDate: string;
+    },
+  ) {
+    const { studentId, amountPaid, paymentDate } = body;
+
+    if (!Types.ObjectId.isValid(studentId)) {
+      throw new BadRequestException(`Invalid student ID: ${studentId}`);
+    }
+
+    return this.studentsService.recordPayment(
+      studentId,
+      amountPaid,
+      paymentDate,
+    );
+  }
+  @Post('payment')
+  async findPaymentById(
+    @Body('id') rawId: string,
+  ): Promise<PaymentDto[] | null> {
+    const id = rawId.includes(':') ? rawId.split(':')[1] : rawId;
+
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestException(`Invalid ObjectId: ${id}`);
+    }
+    return this.studentsService.findPaymentById(id);
+  }
+
   @Get(':Id')
   @ApiOperation({ summary: 'Get student by ID' })
   @ApiResponse({ status: 200, type: StudentDto })
   async findOneById(@Param('Id') Id: string): Promise<Student> {
-    const student = await this.studentsService.findOneById(Id);
+    const student = await this.studentsService.findOneByField('_id', Id,{});
+
     if (!student) {
       throw new Error(`Student with ID ${Id} not found`);
     }
@@ -115,17 +175,16 @@ export class StudentsController {
   @ApiOperation({ summary: 'Create a new student' })
   @ApiResponse({ status: 201, type: StudentDto })
   async create(@Body() createStudentDto: Student): Promise<Student> {
-    let student = await this.studentsService.findOne(
-      createStudentDto.PhoneNumber,
-    );
+    let student = await this.studentsService.findOneByField('PhoneNumber', createStudentDto.PhoneNumber, { isActive: true });
+
+    console.log(createStudentDto)
     if (student) {
       throw new BadRequestException(
         'Student with this phone number already exists',
       );
     }
-    student = await this.studentsService.findOneByRoomNumber(
-      createStudentDto.RoomNumber,
-    );
+    student = await this.studentsService.findOneByField('RoomNumber', createStudentDto.RoomNumber, { isActive: true });
+
     if (student) {
       throw new BadRequestException(
         'Student with this Room number already exists',
@@ -147,9 +206,8 @@ export class StudentsController {
     @Param('id') id: string,
     @Body() updateStudentDto: Student,
   ): Promise<Student | any> {
-    const student = await this.studentsService.findOneByRoomNumber(
-      updateStudentDto.RoomNumber,
-    );
+    const student = await this.studentsService.findOneByField('RoomNumber', updateStudentDto.RoomNumber, { isActive: true });
+
     if (student) {
       throw new BadRequestException(
         'Student with this Room number already exists',

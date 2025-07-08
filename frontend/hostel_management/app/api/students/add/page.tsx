@@ -3,16 +3,19 @@
 import { useState, useEffect } from "react";
 import Select from "react-select";
 import { useRouter } from "next/navigation";
-import styles from "./addstudentpage.module.css"; // Import the combined CSS
+import styles from "./addstudentpage.module.css";
 
 export default function AddStudentPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
+    Name: "",
     UserName: "",
     RoomNumber: "",
     TotalFee: "5000",
     PhoneNumber: "",
     FeePaid: "",
+    JoiningDate: "",
+    Email: "",
   });
 
   const [roomOptions, setRoomOptions] = useState<
@@ -100,9 +103,34 @@ export default function AddStudentPage() {
           Name
           <input
             type="text"
-            name="UserName"
+            name="Name"
             placeholder="Full name"
+            value={formData.Name}
+            onChange={handleChange}
+            required
+            className={styles.input}
+          />
+        </label>
+
+        <label className={styles.label}>
+          Username
+          <input
+            type="text"
+            name="UserName"
+            placeholder="UserName"
             value={formData.UserName}
+            onChange={handleChange}
+            required
+            className={styles.input}
+          />
+        </label>
+
+        <label className={styles.label}>
+          Joining Date
+          <input
+            type="date"
+            name="JoiningDate"
+            value={formData.JoiningDate}
             onChange={handleChange}
             required
             className={styles.input}
@@ -149,38 +177,60 @@ export default function AddStudentPage() {
         </div>
 
         <label className={styles.label}>
-          Total Fee
+          Email
           <input
-            type="number"
-            name="TotalFee"
-            placeholder="Total fee"
-            value={formData.TotalFee}
+            type="email"
+            name="Email"
+            placeholder="Enter email address"
+            value={formData.Email}
             onChange={handleChange}
             required
             className={styles.input}
           />
         </label>
 
-        <label className={styles.label}>
-          Phone Number
-          <input
-            type="text"
-            name="PhoneNumber"
-            placeholder="10-digit phone number"
-            value={formData.PhoneNumber}
-            onChange={handleChange}
-            required
-            pattern="\d{10}"
-            title="Phone number must be exactly 10 digits"
-            className={styles.input}
-          />
-        </label>
+        <div className={styles.row}>
+          <label className={styles.label} style={{ flex: 1 }}>
+            Total Fee
+            <input
+              type="number"
+              name="TotalFee"
+              placeholder="Total fee"
+              value={formData.TotalFee}
+              onChange={handleChange}
+              required
+              className={styles.input}
+            />
+          </label>
 
-        <button type="submit" className={`${styles.button} ${styles.submitButton}`}>
+          <label className={styles.label} style={{ flex: 1 }}>
+            Phone Number
+            <input
+              type="text"
+              name="PhoneNumber"
+              placeholder="10-digit phone number"
+              value={formData.PhoneNumber}
+              onChange={handleChange}
+              required
+              pattern="\d{10}"
+              title="Phone number must be exactly 10 digits"
+              className={styles.input}
+            />
+          </label>
+        </div>
+
+        <button
+          type="submit"
+          className={`${styles.button} ${styles.submitButton}`}
+        >
           Submit
         </button>
 
-        <button type="button" onClick={handleGoBack} className={`${styles.button} ${styles.goBackButton}`}>
+        <button
+          type="button"
+          onClick={handleGoBack}
+          className={`${styles.button} ${styles.goBackButton}`}
+        >
           Go Back
         </button>
       </form>

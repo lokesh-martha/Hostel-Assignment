@@ -12,6 +12,7 @@ import { Response ,Request} from 'express';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { LoginDto } from '../dto/login.dto';
 import { OAuth2Client } from 'google-auth-library';
+import { ValidateUser } from './validateuser.interface';
 
 @Controller('auth')
 export class AuthController { private readonly googleClient: OAuth2Client;
@@ -36,8 +37,14 @@ export class AuthController { private readonly googleClient: OAuth2Client;
       });
 
       const { email, name } = ticket.getPayload();
+      const validateuser=await this.authService.validateUsernameOrEmail(email)
+    if(!validateuser)
+      {
+        throw new UnauthorizedException('Google authentication failed');
+      }
+      
       const user = await this.authService.findOrCreateUser({
-        username: name as string,
+        username: validateuser.UserName as string,
         email: email as string,
       });
       const token = await this.authService.login(user);
@@ -65,6 +72,7 @@ export class AuthController { private readonly googleClient: OAuth2Client;
       body.username,
       body.password,
     );
+    // console.log(user)
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
     const token = await this.authService.login(user);
@@ -90,11 +98,21 @@ async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
 
   @Post('register')
   async register(@Body() body: any,@Res({ passthrough: true }) res: Response,) {
-    const { username, password } = body;
-    const existingUser = await this.authService.findUser(username);
+    const { username,email, password } = body;
+    const validateUser:ValidateUser|null = await this.authService.validateUsernameOrEmail( username, email ); 
+    if(!validateUser)
+      {
+        return {message:"user is not found"}
+      }
+    let existingUser = await this.authService.findUser({username:validateUser.UserName});
+     existingUser = await this.authService.findUser({email:validateUser.Email});
+    console.log(existingUser)
+
     if (existingUser) throw new BadRequestException('User already exists');
-    const user=await this.authService.createUser(username, password);
+    const user = await this.authService.createUser({ username:validateUser.UserName, email:validateUser.Email, password });
+
     const token = await this.authService.login(user);
+    
     if(!token)
       {
         throw new UnauthorizedException('Invalid credentials');
@@ -108,3 +126,4 @@ async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
       return { message: 'Registered  successful', access_token: token };
   }
 }
+

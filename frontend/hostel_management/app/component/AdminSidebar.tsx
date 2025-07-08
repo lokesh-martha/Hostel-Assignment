@@ -103,6 +103,13 @@ export default function AdminSidebar() {
         >
           📩 Complaints
         </a>
+        <a
+          href="/api/notices"
+          onClick={(e) => handleProtectedRoute(e, "/api/notices")}
+          className={linkClass("/api/notices")}
+        >
+            📢 Notices
+        </a>
       </nav>
     </aside>
   );

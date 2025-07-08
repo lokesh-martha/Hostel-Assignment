@@ -55,7 +55,7 @@ export default function ComplaintsPage() {
       );
     }
   };
-  let filteredComplaints = complaints.filter(
+  const filteredComplaints = complaints.filter(
     (complaint) =>
       (complaint.UserName?.toLowerCase() || "").includes(
         searchQuery.toLowerCase()

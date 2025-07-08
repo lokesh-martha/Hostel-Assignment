@@ -18,14 +18,14 @@ export default function Home() {
         return res.json();
       })
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         setTotalStudents(data);
       })
       .catch((err) => console.error("Failed to fetch total students:", err));
   }, []);
 
-  const occupiedRooms = totalStudents ?? 0;
-  const availableRooms = totalRooms - occupiedRooms;
+  // const occupiedRooms = totalStudents ?? 0;
+  // const availableRooms = totalRooms - occupiedRooms;
     if (totalStudents === null) {
       return <div className="text-center mt-20 text-lg">Loading dashboard...</div>;
     }

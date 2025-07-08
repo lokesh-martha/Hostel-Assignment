@@ -6,6 +6,8 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
 import { Token } from 'src/Schemas/token.schems';
+import { StudentsService } from 'src/students/students.service';
+import { ValidateUser } from './validateuser.interface';
 
 @Injectable()
 export class AuthService {
@@ -15,17 +17,39 @@ export class AuthService {
     @InjectModel(Token.name) public tokenModel: Model<Token>,
 
     private jwtService: JwtService,
-  ) {}
+    private studentservice:StudentsService
+  ) {
+  }
 
-  async validateUser(username: string, password: string): Promise<any> {
-    const user = await this.userModel.findOne({ username });
+  async validateUser(identifier: string, password: string): Promise<any> {
+    const user = await this.userModel.findOne({
+      $or: [
+        { username: identifier },
+        { email: identifier }
+      ]
+    });
+    // console.log(user)
+  
     if (user && (await bcrypt.compare(password, user.password))) {
       const { password, ...result } = user.toObject();
       return result;
     }
+  
     console.log('Invalid password or user not found');
     return null;
   }
+  
+  async validateUsernameOrEmail(username?: string, email?: string): Promise<ValidateUser|null> {
+    if (!username && !email) {
+      console.log('No username or email provided');
+      return null;
+    }
+    const user = await this.studentservice.findUsernameOrEmail({ username, email });
+    // console.log(user)
+    return user;
+  }
+  
+  
 
   async login(user: any) {
     const payload = { username: user.username, sub: user._id, role: user.role };
@@ -36,20 +60,40 @@ export class AuthService {
     return token;
   }
 
-  async findUser(username: string) {
-    return this.userModel.findOne({ username });
+  async findUser(filter: Record<string, any>) {
+    return this.userModel.findOne(filter);
   }
+  
 
-  async createUser(username: string, password: string) {
-    const existingUser = await this.findUser(username);
-    if (existingUser) {
-      throw new BadRequestException('User already exists');
+
+  async createUser({ username, email, password }: { username?: string; email?: string; password: string }) {
+    if (!username && !email) {
+      throw new BadRequestException('At least username or email must be provided');
     }
-
+  
+    // Check if user already exists by username or email
+    const existingUser = await this.userModel.findOne({
+      $or: [
+        ...(username ? [{ username }] : []),
+        ...(email ? [{ email }] : [])
+      ]
+    });
+  
+    if (existingUser) {
+      throw new BadRequestException('User with provided username or email already exists');
+    }
+  
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new this.userModel({ username, password: hashedPassword });
+  
+    const newUser = new this.userModel({
+      ...(username && { username }),
+      ...(email && { email }),
+      password: hashedPassword
+    });
+  
     return newUser.save();
   }
+  
   async findOrCreateUser({
     username,
     email,

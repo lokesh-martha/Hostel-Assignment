@@ -6,6 +6,9 @@ export class StudentDto {
   
   @ApiProperty()
   UserName: string;
+  
+  @ApiProperty()
+  Name: string;
 
   @ApiProperty()
   RoomNumber: number;
@@ -21,6 +24,8 @@ export class StudentDto {
 
   @ApiProperty()
   PhoneNumber: string;
+  @ApiProperty()
+
 
   @ApiProperty({ default: 'student' })
   role: string;

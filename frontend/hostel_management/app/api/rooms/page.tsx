@@ -77,10 +77,9 @@ export default function RoomsPage() {
         .then((res) => res.json())
         .then((data: Application[]) => {
           setApplications(data);
-          const userName = data[0]?.StudentName || "";
           const pendingRooms = data
             .filter(
-              (app) => app.StudentName === userName && app.Status === "Pending"
+              (app) => app.StudentName === username && app.Status === "Pending"
             )
             .map((app) => app.AppliedRoom);
           setAppliedRooms(pendingRooms);
@@ -122,12 +121,8 @@ export default function RoomsPage() {
         prev.filter((room) => room.RoomNumber !== roomNumber)
       );
     }
-  
-    alert(result.message || "Application submitted.");
   };
   
-  
-
   const handleCancelApplication = async (roomNumber: string) => {
     const studentName = username || "";
 

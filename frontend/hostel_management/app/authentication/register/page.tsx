@@ -1,22 +1,44 @@
 'use client';
+
 import { useState } from 'react';
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
 
+  const getJwtFromCookie = () => {
+    const cookies = document.cookie;
+    return cookies
+      .split('; ')
+      .find((row) => row.startsWith('jwt='))
+      ?.split('=')[1];
+  };
+
   const register = async () => {
+    if (!username && !email) {
+      alert('Please provide either a username or an email.');
+      return;
+    }
+
     const res = await fetch('http://localhost:3000/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials:"include",
-      body: JSON.stringify({ username, password }),
+      credentials: 'include',
+      body: JSON.stringify({ username, email, password }),
     });
+
     const data = await res.json();
     alert(data.message);
-    if (res.ok) router.push('/api');
+
+    if (res.ok) {
+      const tokenExists = getJwtFromCookie();
+      if (tokenExists) {
+        router.push('/api');
+      }
+    }
   };
 
   return (
@@ -57,7 +79,26 @@ export default function RegisterPage() {
           <input
             placeholder="Enter username"
             value={username}
-            onChange={e => setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
+            style={{
+              marginTop: '6px',
+              marginBottom: '1rem',
+              padding: '10px',
+              borderRadius: '6px',
+              border: '1px solid #d1d5db',
+              fontSize: '0.95rem',
+              width: '100%',
+            }}
+          />
+        </label>
+
+        <label style={{ fontSize: '0.9rem', fontWeight: 500 }}>
+          Email
+          <input
+            placeholder="Enter email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             style={{
               marginTop: '6px',
               marginBottom: '1rem',
@@ -76,7 +117,7 @@ export default function RegisterPage() {
             placeholder="Enter password"
             type="password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             style={{
               marginTop: '6px',
               marginBottom: '1.5rem',
@@ -93,14 +134,14 @@ export default function RegisterPage() {
         <button
           onClick={register}
           style={{
-            width: "100%",
-            padding: "10px",
-            marginBottom: "10px",
-            backgroundColor: "#0070f3",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
+            width: '100%',
+            padding: '10px',
+            marginBottom: '10px',
+            backgroundColor: '#0070f3',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
           }}
         >
           Register

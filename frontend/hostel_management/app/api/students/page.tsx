@@ -6,6 +6,7 @@ import styles from "./StudentsPage.module.css";
 
 type Student = {
   _id: string;
+  Name:string;
   UserName: string;
   RoomNumber: string;
   TotalFee: number;
@@ -21,15 +22,16 @@ export default function StudentsPage() {
   const router = useRouter();
   const getJwtFromCookie = () => {
     const cookies = document.cookie;
-    return cookies
-      .split("; ")
-      .find((row) => row.startsWith("jwt="))
-      ?.split("=")[1] || null;
+    return (
+      cookies
+        .split("; ")
+        .find((row) => row.startsWith("jwt="))
+        ?.split("=")[1] || null
+    );
   };
-  
 
   useEffect(() => {
-    const jwt=getJwtFromCookie();
+    const jwt = getJwtFromCookie();
     if (jwt) {
       setToken(jwt);
     }
@@ -38,7 +40,7 @@ export default function StudentsPage() {
     if (!token) return;
     fetch("http://localhost:3000/students/GetStudentDetails", {
       method: "GET",
-      credentials: "include", 
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {
@@ -47,7 +49,7 @@ export default function StudentsPage() {
         } else {
           console.error("Expected an array but got:", data);
         }
-      })
+      });
   }, [token]);
 
   const handleDelete = async (id: string) => {
@@ -58,22 +60,21 @@ export default function StudentsPage() {
 
     const res = await fetch(`http://localhost:3000/students/${id}`, {
       method: "DELETE",
-      credentials:'include',
+      credentials: "include",
     });
 
     if (res.ok) {
       setStudents((prev) => prev.filter((student) => student._id !== id));
     }
   };
-  
+
   // console.log(students)
   const filteredStudents = students.filter(
     (student) =>
-      (student.UserName?.toLowerCase() || "").includes(
+      (student.Name?.toLowerCase() || "").includes(
         searchQuery.toLowerCase()
       ) || student.RoomNumber.toString().includes(searchQuery)
   );
-  
 
   return (
     <div className={styles.container}>
@@ -109,7 +110,7 @@ export default function StudentsPage() {
         <tbody>
           {filteredStudents.map((student) => (
             <tr key={student._id}>
-              <td className={styles.tableCell}>{student.UserName}</td>
+              <td className={styles.tableCell}>{student.Name}</td>
               <td className={styles.tableCell}>{student.RoomNumber}</td>
               <td className={styles.tableCell}>₹{student.TotalFee}</td>
               <td className={styles.tableCell}>₹{student.FeePaid}</td>
@@ -117,7 +118,7 @@ export default function StudentsPage() {
               <td className={styles.tableCell}>{student.PhoneNumber}</td>
               <td className={styles.tableCell}>
                 <button
-                className={styles.actionButton}
+                  className={styles.actionButton}
                   onClick={() =>
                     router.push(`/api/students/edit/${student._id}`)
                   }
@@ -129,6 +130,14 @@ export default function StudentsPage() {
                   className={styles.actionButton}
                 >
                   🗑️
+                </button>
+                <button
+                  onClick={() =>
+                    router.push(`/api/students/payment/${student._id}`)
+                  }
+                  className={styles.actionButton}
+                >
+                  📄 
                 </button>
               </td>
             </tr>

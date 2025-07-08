@@ -8,9 +8,10 @@ import { AuthController } from './auth.controller';
 import { User, UserSchema } from '../Schemas/user.schema';
 import { Token, TokenSchema } from 'src/Schemas/token.schems';
 import { JwtStrategy } from './jwt.strategy';
+import { StudentsModule } from 'src/students/students.module';
 
 @Module({
-  imports: [
+  imports: [StudentsModule,
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
