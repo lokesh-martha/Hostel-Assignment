@@ -10,17 +10,13 @@ async function bootstrap() {
   app.useGlobalGuards(new RolesGuard(new Reflector()));
 
 
-  // Middleware
   app.use(cookieParser());
 
-  // CORS
   app.enableCors({
     origin: 'http://localhost:3001',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
-
-  // Swagger Configuration
   const config = new DocumentBuilder()
     .setTitle('Complaints API')
     .setDescription('API for managing complaints')
@@ -34,31 +30,14 @@ async function bootstrap() {
         name: 'Authorization',
         in: 'header',
       },
-      'access-token', // This name will be used in @ApiBearerAuth()
+      'access-token', 
     )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document); // Swagger UI at /api
+  SwaggerModule.setup('api', app, document); 
 
-  // Start server
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
 
-// import { NestFactory } from '@nestjs/core';
-// import { AppModule } from './app.module';
-// import * as cookieParser from 'cookie-parser'
-
-// async function bootstrap() {
-//   const app = await NestFactory.create(AppModule);
-//   app.use(cookieParser());
-//   app.enableCors(
-//     ({
-//       origin: 'http://localhost:3001',
-//       credentials:true
-//     })
-//     )
-//   await app.listen(process.env.PORT ?? 3000);
-// }
-// bootstrap();

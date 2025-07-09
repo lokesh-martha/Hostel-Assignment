@@ -9,8 +9,8 @@ export default function Sidebar() {
   return (
     <div className={styles.sidebar}>
       <button onClick={() => router.push('/dashboard')}>Dashboard</button>
-      <button onClick={() => router.push('/api/students')}>Students</button>
-      <button onClick={() => router.push('/api/complaints')}>Complaints</button>
+      <button onClick={() => router.push('/home/students')}>Students</button>
+      <button onClick={() => router.push('/home/complaints')}>Complaints</button>
     </div>
   );
 }

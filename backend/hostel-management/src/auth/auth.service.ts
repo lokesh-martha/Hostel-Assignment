@@ -28,7 +28,6 @@ export class AuthService {
         { email: identifier }
       ]
     });
-    // console.log(user)
   
     if (user && (await bcrypt.compare(password, user.password))) {
       const { password, ...result } = user.toObject();
@@ -45,7 +44,7 @@ export class AuthService {
       return null;
     }
     const user = await this.studentservice.findUsernameOrEmail({ username, email });
-    // console.log(user)
+   
     return user;
   }
   
@@ -71,7 +70,6 @@ export class AuthService {
       throw new BadRequestException('At least username or email must be provided');
     }
   
-    // Check if user already exists by username or email
     const existingUser = await this.userModel.findOne({
       $or: [
         ...(username ? [{ username }] : []),

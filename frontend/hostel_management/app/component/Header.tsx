@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useUser } from "../context/UserContext";
 
 export default function Header() {
   const router = useRouter();
@@ -10,9 +11,10 @@ export default function Header() {
 
   const [isAuthenticated, setIsAuthenticated] = useState(true); 
   const [username, setUsername] = useState<string|undefined>(""); 
+  const {user,setUser}=useUser()
 
   useEffect(() => {
-    setUsername(process.env.username)
+    setUsername(user?.username)
     if (!isAuthenticated || !username) return;
 
     const eventSource = new EventSource(`http://localhost:3000/students/fee-status/${username}`,{
@@ -45,6 +47,7 @@ export default function Header() {
         method: "POST",
         credentials: "include",
       });
+      setUser({username:"",role:"",token:""})
       setIsAuthenticated(false);
       setUsername("");
       router.push("/authentication");

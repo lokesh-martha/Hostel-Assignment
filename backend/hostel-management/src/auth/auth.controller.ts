@@ -72,7 +72,6 @@ export class AuthController { private readonly googleClient: OAuth2Client;
       body.username,
       body.password,
     );
-    // console.log(user)
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
     const token = await this.authService.login(user);

@@ -4,6 +4,7 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 type User = {
   username: string;
   role: string;
+  token:string;
 };
 
 type UserContextType = {

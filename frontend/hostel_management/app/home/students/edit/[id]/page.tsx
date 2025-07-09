@@ -60,7 +60,7 @@ export default function EditStudentPage() {
   };
 
   const handleClick = () => {
-    router.push("/api/students");
+    router.push("/home/students");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -79,7 +79,7 @@ export default function EditStudentPage() {
 
     const response = await res.json();
     if (res.ok) {
-      router.push("/api/students");
+      router.push("/home/students");
     } else {
       alert(response.message || "Failed to update student");
     }

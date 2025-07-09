@@ -79,14 +79,14 @@ export default function AddStudentPage() {
     });
 
     if (res.ok) {
-      router.push("/api/students");
+      router.push("/home/students");
     } else {
       alert("Failed to add student");
     }
   };
 
   const handleGoBack = () => {
-    router.push("/api/students");
+    router.push("/home/students");
   };
 
   const roomOptionsFormatted = roomOptions.map((room) => ({

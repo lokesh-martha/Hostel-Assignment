@@ -75,7 +75,7 @@ export default function ComplaintsPage() {
       className={styles.searchInput}
     />
     <button
-      onClick={() => router.push("/api/complaints/add")}
+      onClick={() => router.push("/home/complaints/add")}
       className={styles.addButton}
     >
       ➕ Add Complaint

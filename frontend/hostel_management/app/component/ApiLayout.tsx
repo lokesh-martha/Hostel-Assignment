@@ -2,9 +2,10 @@
 
 import Header from "./Header";
 import Footer from "./Footer";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import AdminSidebar from "./AdminSidebar";
 import { jwtDecode } from "jwt-decode";
+import { useUser } from "../context/UserContext";
 
 type MyJwtPayload = {
   role: string;
@@ -13,13 +14,14 @@ type MyJwtPayload = {
 };
 
 export default function ApiClientLayout({ children }: { children: ReactNode }) {
-  // const [role, setRole] = useState<string | null>(null);
+  const {user}=useUser()
+  const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = process.env.token
+    const token = user?.token;
     if (token) {
-      // const decoded = jwtDecode<MyJwtPayload>(token);
-      // setRole(decoded.role);
+      const decoded = jwtDecode<MyJwtPayload>(token);
+      setRole(decoded.role);
     }
   }, []);
 

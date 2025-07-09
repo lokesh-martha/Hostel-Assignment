@@ -36,7 +36,7 @@ export default function RegisterPage() {
     if (res.ok) {
       const tokenExists = getJwtFromCookie();
       if (tokenExists) {
-        router.push('/api');
+        router.push('/home');
       }
     }
   };

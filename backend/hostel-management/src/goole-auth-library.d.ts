@@ -1,4 +1,3 @@
-// types/google-auth-library.d.ts
 declare module 'google-auth-library' {
     export class OAuth2Client {
       constructor(

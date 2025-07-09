@@ -45,11 +45,8 @@ export default function Home() {
       
       if (token) {
         const decoded = jwtDecode<MyJwtPayload>(token);
-        setUser({ username: decoded.username, role: decoded.role });
-        process.env.token=token; 
-        process.env.role = decoded.role;
-        process.env.username = decoded.username;
-        router.push("/api");
+        setUser({ username: decoded.username, role: decoded.role,token:token });
+        router.push("/home");
       }
     } catch (error) {
       console.error('Google login failed:', error);
@@ -70,10 +67,7 @@ export default function Home() {
     const token = getJwtFromCookie();
     if (token) {
       const decoded = jwtDecode<MyJwtPayload>(token);
-      setUser({ username: decoded.username, role: decoded.role });
-      process.env.role = decoded.role;
-      process.env.username = decoded.username;
-      process.env.token = token;
+      setUser({ username: decoded.username, role: decoded.role , token:token});
     }
 
     if (!token) {
@@ -82,7 +76,7 @@ export default function Home() {
       return;
     }
 
-    router.push("/api");
+    router.push("/home");
   };
 
   return (

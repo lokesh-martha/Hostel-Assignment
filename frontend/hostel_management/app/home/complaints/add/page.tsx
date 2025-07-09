@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/app/context/UserContext";
 
 export default function AddComplaintPage() {
+  const {user}=useUser()
   const router = useRouter();
   const [formData, setFormData] = useState({
-    UserName: process.env.username || "",
+    UserName: user?.username || "",
     RoomNumber: "",
     Complaint: "",
   });
@@ -27,12 +29,12 @@ export default function AddComplaintPage() {
       body: JSON.stringify(formData),
     });
 
-    if (res.ok) router.push("/api/complaints");
+    if (res.ok) router.push("/home/complaints");
     else alert("Failed to submit complaint");
   };
 
   const handleGoBack = () => {
-    router.push("/api/complaints");
+    router.push("/home/complaints");
   };
 
   return (
@@ -80,7 +82,7 @@ export default function AddComplaintPage() {
             onChange={handleChange}
             value={formData.UserName}
             required
-            readOnly={process.env.role !== "admin"}
+            readOnly={user?.role !== "admin"}
             style={{
               marginTop: "6px",
               padding: "10px",

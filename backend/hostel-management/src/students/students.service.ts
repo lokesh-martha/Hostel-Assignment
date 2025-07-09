@@ -46,11 +46,7 @@ export class StudentsService {
       return null;
     }
   
-    // console.log('Query being executed:', JSON.stringify(query));
-  
     const user = await this.studentModule.findOne(query);
-    // console.log('User found:', user);
-  
     return user;
   }
   
@@ -153,10 +149,6 @@ export class StudentsService {
     const result = await this.studentModule.findByIdAndUpdate(studentId, {
       $inc: { FeePaid: amountPaid, FeeDue: -amountPaid },
     });
-
-    // if (result.modifiedCount === 0) {
-    //   throw new BadRequestException('Failed to update student fee total.');
-    // }
 
     return { message: 'Payment recorded and student updated successfully.' };
   }
@@ -376,28 +368,3 @@ async addNotice(createNoticeDto: CreateNoticeDto): Promise<Notice> {
   }
   
 }
-
-// async findOne(PhoneNumber: string): Promise<Boolean> {
-  //   const existing = await this.studentModule.findOne({
-  //     PhoneNumber,
-  //     IsActive: true,
-  //   });
-  //   if (!existing) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
-  // async findOneByRoomNumber(RoomNumber: number): Promise<Boolean> {
-  //   const existing = await this.studentModule.findOne({
-  //     RoomNumber,
-  //     IsActive: true,
-  //   });
-  //   if (!existing) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
-
-  // async findOneById(Id: any): Promise<Student | null> {
-  //   return this.studentModule.findById(Id);
-  // }

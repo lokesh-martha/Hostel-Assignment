@@ -52,8 +52,8 @@ export default function AdminSidebar() {
   };
 
   const isActive = (href: string) => {
-    if (href === "/api") {
-      return pathname === "/api";
+    if (href === "/home") {
+      return pathname === "/home";
     }
     return pathname === href || pathname.startsWith(href + "/");
   };
@@ -69,18 +69,18 @@ export default function AdminSidebar() {
     <aside className="w-64 bg-slate-100 dark:bg-slate-900 text-gray-800 dark:text-gray-200 p-6 shadow-md">
       <nav className="space-y-4 text-base font-medium">
         <a
-          href="/api"
-          onClick={(e) => handleProtectedRoute(e, "/api")}
-          className={linkClass("/api")}
+          href="/home"
+          onClick={(e) => handleProtectedRoute(e, "/home")}
+          className={linkClass("/home")}
         >
           🏠 Dashboard
         </a>
 
         {role === "admin" && (
           <a
-            href="/api/students"
-            onClick={(e) => handleProtectedRouteStudent(e, "/api/students")}
-            className={linkClass("/api/students")}
+            href="/home/students"
+            onClick={(e) => handleProtectedRouteStudent(e, "/home/students")}
+            className={linkClass("/home/students")}
           >
             👨‍🎓 Students
           </a>
@@ -88,25 +88,25 @@ export default function AdminSidebar() {
 
         {
           <a
-            href="/api/rooms"
-            onClick={(e) => handleProtectedRoute(e, "/api/rooms")}
-            className={linkClass("/api/rooms")}
+            href="/home/rooms"
+            onClick={(e) => handleProtectedRoute(e, "/home/rooms")}
+            className={linkClass("/home/rooms")}
           >
             🛏️ Rooms
           </a>
         }
 
         <a
-          href="/api/complaints"
-          onClick={(e) => handleProtectedRoute(e, "/api/complaints")}
-          className={linkClass("/api/complaints")}
+          href="/home/complaints"
+          onClick={(e) => handleProtectedRoute(e, "/home/complaints")}
+          className={linkClass("/home/complaints")}
         >
           📩 Complaints
         </a>
         <a
-          href="/api/notices"
-          onClick={(e) => handleProtectedRoute(e, "/api/notices")}
-          className={linkClass("/api/notices")}
+          href="/home/notices"
+          onClick={(e) => handleProtectedRoute(e, "/home/notices")}
+          className={linkClass("/home/notices")}
         >
             📢 Notices
         </a>

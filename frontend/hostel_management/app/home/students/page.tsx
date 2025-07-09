@@ -88,7 +88,7 @@ export default function StudentsPage() {
           className={styles.searchInput}
         />
         <button
-          onClick={() => router.push("/api/students/add")}
+          onClick={() => router.push("/home/students/add")}
           className={styles.addButton}
         >
           ➕ Add Student
@@ -120,7 +120,7 @@ export default function StudentsPage() {
                 <button
                   className={styles.actionButton}
                   onClick={() =>
-                    router.push(`/api/students/edit/${student._id}`)
+                    router.push(`/home/students/edit/${student._id}`)
                   }
                 >
                   ✏️
@@ -133,7 +133,7 @@ export default function StudentsPage() {
                 </button>
                 <button
                   onClick={() =>
-                    router.push(`/api/students/payment/${student._id}`)
+                    router.push(`/home/students/payment/${student._id}`)
                   }
                   className={styles.actionButton}
                 >
